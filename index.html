@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Focus Timer Pro</title>
+  <style>
+    :root {
+      --primary: #3498db;
+      --background: #f5f7fa;
+      --card-bg: #ffffff;
+      --text: #2c3e50;
+      --success: #2ecc71;
+      --warning: #e74c3c;
+      --shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .dark-mode {
+      --primary: #bb86fc;
+      --background: #121212;
+      --card-bg: #1e1e1e;
+      --text: #f5f5f5;
+      --success: #03dac6;
+      --warning: #cf6679;
+      --shadow: 0 4px 6px rgba(0,0,0,0.3);
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--background);
+      color: var(--text);
+      margin: 0;
+      padding: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: var(--shadow);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
+      color: var(--primary);
+    }
+
+    .timer-display {
+      font-size: 4rem;
+      text-align: center;
+      margin: 20px 0;
+      font-family: 'Courier New', monospace;
+      color: var(--primary);
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      font-size: 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.2s, background 0.2s;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .webcam-container {
+      position: relative;
+      margin: 0 auto 20px;
+      width: 320px;
+      height: 240px;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 3px solid var(--primary);
+    }
+
+    #canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    #status {
+      text-align: center;
+      font-weight: bold;
+      min-height: 24px;
+      margin: 15px 0;
+      font-size: 1.2rem;
+    }
+
+    .focused { color: var(--success); }
+    .distracted { color: var(--warning); }
+
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin: 20px 0;
+      font-size: 1.2rem;
+    }
+
+    .enhancements {
+      margin-top: 30px;
+      border-top: 1px solid #ddd;
+      padding-top: 20px;
+    }
+
+    .sound-controls {
+      margin: 20px 0;
+      text-align: center;
+    }
+
+    .sound-options {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .tip-box {
+      background: rgba(0,0,0,0.1);
+      padding: 15px;
+      border-radius: 8px;
+      margin: 20px 0;
+      text-align: center;
+      font-style: italic;
+    }
+
+    .history-view {
+      max-height: 300px;
+      overflow-y: auto;
+      margin-top: 20px;
+      padding: 10px;
+      background: rgba(0,0,0,0.05);
+      border-radius: 8px;
+    }
+
+    .session-card {
+      background: rgba(0,0,0,0.1);
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 15px;
+      }
+      .timer-display {
+        font-size: 3rem;
+      }
+      .webcam-container {
+        width: 280px;
+        height: 210px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🧠 AI Focus Timer Pro</h1>
+    
+    <div class="timer-display">02:00</div>
+    
+    <div class="controls">
+      <button id="startBtn">Start Session</button>
+      <button id="darkModeToggle">🌙 Dark Mode</button>
+      <button id="soundBtn">🔇 Ambient Sounds</button>
+      <button id="historyBtn">📊 View History</button>
+    </div>
+    
+    <div class="webcam-container">
+      <video id="webcam" width="320" height="240" playsinline></video>
+      <canvas id="canvas" width="320" height="240"></canvas>
+    </div>
+    
+    <div id="status">Loading AI model...</div>
+    
+    <div class="stats">
+      <div>Focus Score: <span id="score">0%</span></div>
+      <div>Distractions: <span id="distractions">0</span></div>
+    </div>
+    
+    <div id="tipsBox" class="tip-box"></div>
+    
+    <div class="enhancements">
+      <div class="sound-controls hidden" id="soundControls">
+        <div class="sound-options">
+          <button data-sound="rain">🌧️ Rain</button>
+          <button data-sound="forest">🌲 Forest</button>
+          <button data-sound="cafe">☕ Cafe</button>
+          <button data-sound="off">❌ Off</button>
+        </div>
+      </div>
+      
+      <div id="historyView" class="history-view hidden"></div>
+    </div>
+  </div>
+
+  <!-- TensorFlow.js and Face Detection -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.18.0/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/face-landmarks-detection@0.0.3/dist/face-landmarks-detection.js"></script>
+  
+  <script>
+    // Main Application
+    let model;
+    let timer;
+    let minutes = 2;
+    let seconds = 0;
+    let distractions = 0;
+    let focusTime = 0;
+    let isRunning = false;
+    let faceCheckInterval;
+    let sessionStartTime;
+    const sessionHistory = JSON.parse(localStorage.getItem('focusSessions')) || [];
+
+    // DOM Elements
+    const timerDisplay = document.querySelector('.timer-display');
+    const startBtn = document.getElementById('startBtn');
+    const webcam = document.getElementById('webcam');
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const statusEl = document.getElementById('status');
+    const scoreEl = document.getElementById('score');
+    const distractionsEl = document.getElementById('distractions');
+    const tipsBox = document.getElementById('tipsBox');
+    const historyView = document.getElementById('historyView');
+    const soundControls = document.getElementById('soundControls');
+    const soundBtn = document.getElementById('soundBtn');
+    const historyBtn = document.getElementById('historyBtn');
+    const darkModeToggle = document.getElementById('darkModeToggle');
+
+    // Productivity Tips
+    const tips = [
+      "Try the 20-20-20 rule: Every 20 mins, look at something 20ft away for 20 seconds",
+      "Hydration boosts focus - keep water nearby",
+      "Stand up and stretch between sessions",
+      "Prioritize your most important task first",
+      "Silence phone notifications during focus sessions",
+      "Use headphones with ambient sounds to improve concentration",
+      "Break large tasks into smaller, manageable chunks",
+      "Review completed sessions to track your progress"
+    ];
+
+    // Sound Generator Variables
+    let noiseNode;
+    const soundContext = new (window.AudioContext || window.webkitAudioContext)();
+
+    // Speech Synthesis
+    function speak(text) {
+      if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 1.0;
+        utterance.pitch = 1.0;
+        speechSynthesis.speak(utterance);
+      }
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      loadModel();
+      showRandomTip();
+      
+      // Event Listeners
+      startBtn.addEventListener('click', toggleTimer);
+      soundBtn.addEventListener('click', () => soundControls.classList.toggle('hidden'));
+      historyBtn.addEventListener('click', toggleHistory);
+      darkModeToggle.addEventListener('click', () => document.body.classList.toggle('dark-mode'));
+      
+      // Sound buttons
+      document.querySelectorAll('[data-sound]').forEach(btn => {
+        btn.addEventListener('click', () => handleSound(btn.dataset.sound));
+      });
+    });
+
+    // Load TensorFlow.js model
+    async function loadModel() {
+      try {
+        statusEl.textContent = "Loading AI model...";
+        await tf.ready();
+        
+        model = await faceLandmarksDetection.load(
+          faceLandmarksDetection.SupportedPackages.mediapipeFacemesh,
+          { maxFaces: 1 }
+        );
+        
+        statusEl.textContent = "AI ready! Click 'Start Session'";
+        startBtn.disabled = false;
+      } catch (error) {
+        statusEl.textContent = "Error loading AI. Check console.";
+        console.error("Model loading error:", error);
+      }
+    }
+
+    // Webcam setup
+    async function setupWebcam() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ 
+          video: { width: 320, height: 240, facingMode: "user" },
+          audio: false
+        });
+        webcam.srcObject = stream;
+        
+        return new Promise((resolve) => {
+          webcam.onloadedmetadata = () => {
+            webcam.play();
+            resolve();
+          };
+        });
+      } catch (err) {
+        statusEl.textContent = "Webcam error: " + err.message;
+        console.error("Webcam error:", err);
+        throw err;
+      }
+    }
+
+    // Face detection and focus tracking
+    async function detectFocus() {
+      try {
+        if (!model) return;
+        
+        const predictions = await model.estimateFaces({
+          input: webcam,
+          returnTensors: false,
+          flipHorizontal: false,
+          predictIrises: false
+        });
+        
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        if (predictions.length > 0) {
+          const face = predictions[0];
+          // Simple focus detection: Check nose position
+          const nose = face.scaledMesh[4];
+          const isCentered = nose[0] > 100 && nose[0] < 220;
+          
+          if (!isCentered) {
+            distractions++;
+            distractionsEl.textContent = distractions;
+            statusEl.textContent = "⚠️ Stay focused!";
+            statusEl.className = "distracted";
+          } else {
+            focusTime++;
+            const score = Math.round((focusTime / (focusTime + distractions)) * 100);
+            scoreEl.textContent = `${score}%`;
+            statusEl.textContent = "✓ Focused";
+            statusEl.className = "focused";
+          }
+        }
+      } catch (error) {
+        console.error("Face detection error:", error);
+      }
+    }
+
+    // Timer control
+    function toggleTimer() {
+      if (!isRunning) {
+        startSession();
+      } else {
+        pauseSession();
+      }
+    }
+
+    async function startSession() {
+      if (!model) {
+        statusEl.textContent = "Loading...";
+        await loadModel();
+      }
+      
+      try {
+        if (!webcam.srcObject) {
+          await setupWebcam();
+        }
+        
+        isRunning = true;
+        startBtn.textContent = "Pause";
+        sessionStartTime = new Date();
+        faceCheckInterval = setInterval(detectFocus, 1000);
+        
+        // Speak session start
+        speak("Starting focus session. Stay focused!");
+        
+        timer = setInterval(() => {
+          if (seconds === 0) {
+            if (minutes === 0) {
+              completeSession();
+              return;
+            }
+            minutes--;
+            seconds = 59;
+          } else {
+            seconds--;
+          }
+          updateTimerDisplay();
+        }, 1000);
+      } catch (error) {
+        console.error("Start error:", error);
+        isRunning = false;
+        startBtn.textContent = "Start Session";
+      }
+    }
+
+    function pauseSession() {
+      clearInterval(timer);
+      clearInterval(faceCheckInterval);
+      isRunning = false;
+      startBtn.textContent = "Resume";
+      statusEl.textContent = "Paused";
+      statusEl.className = "";
+      
+      // Speak pause notification
+      speak("Session paused");
+    }
+
+    function completeSession() {
+      clearInterval(timer);
+      clearInterval(faceCheckInterval);
+      statusEl.textContent = "🎉 Session complete!";
+      statusEl.className = "";
+      startBtn.textContent = "Start New Session";
+      isRunning = false;
+      
+      // Speak completion
+      const score = Math.round((focusTime / (focusTime + distractions)) * 100);
+      speak(`Session complete! Congratulations! Your focus score was ${score} percent`);
+      
+      // Save session
+      saveSession();
+      // Show breathing exercise
+      startBreathingExercise();
+      // Show new tip
+      showRandomTip();
+    }
+
+    function updateTimerDisplay() {
+      timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    function resetTimer() {
+      minutes = 2;
+      seconds = 0;
+      distractions = 0;
+      focusTime = 0;
+      distractionsEl.textContent = "0";
+      scoreEl.textContent = "0%";
+      updateTimerDisplay();
+    }
+
+    // Session history functions
+    function saveSession() {
+      const now = new Date();
+      const durationInSeconds = Math.floor((now - sessionStartTime) / 1000);
+      const durationMinutes = Math.floor(durationInSeconds / 60);
+      const durationSeconds = durationInSeconds % 60;
+      
+      const session = {
+        date: now.toLocaleString(),
+        duration: `${durationMinutes}:${durationSeconds.toString().padStart(2, '0')}`,
+        score: Math.round((focusTime / (focusTime + distractions)) * 100),
+        distractions
+      };
+      sessionHistory.push(session);
+      localStorage.setItem('focusSessions', JSON.stringify(sessionHistory));
+      
+      // Update history view if it's visible
+      if (!historyView.classList.contains('hidden')) {
+        showHistory();
+      }
+    }
+
+    function toggleHistory() {
+      historyView.classList.toggle('hidden');
+      if (!historyView.classList.contains('hidden')) {
+        showHistory();
+      }
+    }
+
+    function showHistory() {
+      const history = JSON.parse(localStorage.getItem('focusSessions')) || [];
+      historyView.innerHTML = history.length 
+        ? history.reverse().map(session => `
+            <div class="session-card">
+              <p>📅 ${session.date}</p>
+              <p>⏱️ ${session.duration}</p>
+              <p>🎯 ${session.score}% Focus</p>
+              <p>⚠️ ${session.distractions} distractions</p>
+            </div>
+          `).join('')
+        : "<p>No sessions recorded yet</p>";
+    }
+
+    // Breathing exercise
+    function startBreathingExercise() {
+      statusEl.textContent = "Take a breathing break...";
+      let breathPhase = 0;
+      const phases = ["Breathe in...", "Hold...", "Breathe out...", "Hold..."];
+      const colors = ["#4CAF50", "#FFC107", "#F44336", "#2196F3"];
+      
+      const breathTimer = setInterval(() => {
+        statusEl.textContent = phases[breathPhase];
+        statusEl.style.color = colors[breathPhase];
+        breathPhase = (breathPhase + 1) % 4;
+      }, 4000);
+      
+      setTimeout(() => {
+        clearInterval(breathTimer);
+        statusEl.textContent = "Ready for next session!";
+        statusEl.style.color = "";
+        resetTimer();
+      }, 16000);
+    }
+
+    // Sound generator
+    function handleSound(type) {
+      if (noiseNode) noiseNode.stop();
+      if (type === "off") return;
+      
+      noiseNode = soundContext.createOscillator();
+      const gainNode = soundContext.createGain();
+      
+      // Configure different sound profiles
+      switch(type) {
+        case "rain":
+          noiseNode.type = "brownnoise";
+          gainNode.gain.value = 0.02;
+          break;
+        case "forest":
+          noiseNode.type = "sine";
+          noiseNode.frequency.value = 100;
+          gainNode.gain.value = 0.03;
+          break;
+        case "cafe":
+          noiseNode.type = "white";
+          gainNode.gain.value = 0.01;
+          break;
+      }
+      
+      noiseNode.connect(gainNode);
+      gainNode.connect(soundContext.destination);
+      noiseNode.start();
+    }
+
+    // Productivity tips
+    function showRandomTip() {
+      const tip = tips[Math.floor(Math.random() * tips.length)];
+      tipsBox.textContent = tip;
+    }
+  </script>
+</body>
+</html>
