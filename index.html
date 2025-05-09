@@ -13,6 +13,9 @@
       --success: #2ecc71;
       --warning: #e74c3c;
       --shadow: 0 4px 6px rgba(0,0,0,0.1);
+      --focus-gradient: linear-gradient(135deg, #3498db, #2ecc71);
+      --break-gradient: linear-gradient(135deg, #f39c12, #e74c3c);
+      --pulse-animation: pulse 2s infinite;
     }
 
     .dark-mode {
@@ -23,15 +26,62 @@
       --success: #03dac6;
       --warning: #cf6679;
       --shadow: 0 4px 6px rgba(0,0,0,0.3);
+      --focus-gradient: linear-gradient(135deg, #bb86fc, #03dac6);
+      --break-gradient: linear-gradient(135deg, #ff8c00, #cf6679);
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideIn {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0px); }
+    }
+
+    @keyframes colorChange {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+      20%, 40%, 60%, 80% { transform: translateX(5px); }
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
 
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Poppins', sans-serif;
       background: var(--background);
       color: var(--text);
       margin: 0;
       padding: 20px;
-      transition: all 0.3s ease;
+      transition: all 0.5s ease;
+      animation: fadeIn 1s ease-out;
     }
 
     .container {
@@ -41,12 +91,21 @@
       padding: 25px;
       border-radius: 15px;
       box-shadow: var(--shadow);
+      animation: slideIn 0.8s ease-out;
+      transition: all 0.5s ease;
     }
 
     h1 {
       text-align: center;
       margin-bottom: 10px;
-      color: var(--primary);
+      background: var(--focus-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-size: 2.5rem;
+      font-weight: 700;
+      background-size: 200% 200%;
+      animation: colorChange 8s ease infinite;
     }
 
     .timer-display {
@@ -55,6 +114,13 @@
       margin: 20px 0;
       font-family: 'Courier New', monospace;
       color: var(--primary);
+      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      font-weight: 700;
+      transition: all 0.3s ease;
+    }
+
+    .timer-display.pulse {
+      animation: var(--pulse-animation);
     }
 
     .controls {
@@ -73,15 +139,19 @@
       font-size: 1rem;
       border-radius: 8px;
       cursor: pointer;
-      transition: transform 0.2s, background 0.2s;
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow);
+      font-weight: 600;
     }
 
     button:hover {
-      transform: translateY(-2px);
+      transform: translateY(-3px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
     }
 
     button:active {
-      transform: translateY(0);
+      transform: translateY(1px);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
     .webcam-container {
@@ -92,6 +162,13 @@
       border-radius: 10px;
       overflow: hidden;
       border: 3px solid var(--primary);
+      box-shadow: var(--shadow);
+      transition: all 0.3s ease;
+    }
+
+    .webcam-container:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
     }
 
     #canvas {
@@ -106,10 +183,17 @@
       min-height: 24px;
       margin: 15px 0;
       font-size: 1.2rem;
+      transition: all 0.3s ease;
     }
 
-    .focused { color: var(--success); }
-    .distracted { color: var(--warning); }
+    .focused { 
+      color: var(--success);
+      animation: pulse 1.5s infinite;
+    }
+    .distracted { 
+      color: var(--warning);
+      animation: pulse 0.5s infinite;
+    }
 
     .stats {
       display: flex;
@@ -117,12 +201,26 @@
       gap: 30px;
       margin: 20px 0;
       font-size: 1.2rem;
+      animation: slideIn 0.8s ease-out;
+    }
+
+    .stats div {
+      background: rgba(0,0,0,0.05);
+      padding: 10px 15px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .stats div:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
 
     .enhancements {
       margin-top: 30px;
       border-top: 1px solid #ddd;
       padding-top: 20px;
+      animation: fadeIn 1s ease-out;
     }
 
     .sound-controls {
@@ -145,6 +243,13 @@
       margin: 20px 0;
       text-align: center;
       font-style: italic;
+      transition: all 0.3s ease;
+      animation: slideIn 0.8s ease-out;
+    }
+
+    .tip-box:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
 
     .history-view {
@@ -154,6 +259,7 @@
       padding: 10px;
       background: rgba(0,0,0,0.05);
       border-radius: 8px;
+      animation: fadeIn 0.8s ease-out;
     }
 
     .session-card {
@@ -161,10 +267,283 @@
       padding: 12px;
       border-radius: 8px;
       margin-bottom: 10px;
+      transition: all 0.3s ease;
+    }
+
+    .session-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
 
     .hidden {
       display: none;
+    }
+
+    .timer-settings {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      animation: slideIn 0.8s ease-out;
+    }
+
+    .timer-settings input {
+      width: 60px;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      text-align: center;
+      font-size: 1rem;
+      background: var(--card-bg);
+      color: var(--text);
+      transition: all 0.3s ease;
+    }
+
+    .timer-settings input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(52,152,219,0.2);
+    }
+
+    .timer-settings label {
+      font-weight: bold;
+    }
+
+    .preset-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+      animation: slideIn 0.8s ease-out;
+    }
+
+    .preset-btn {
+      padding: 8px 12px;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+    }
+
+    .preset-btn:hover {
+      transform: translateY(-3px) scale(1.05);
+    }
+
+    .progress-container {
+      width: 100%;
+      height: 10px;
+      background: rgba(0,0,0,0.1);
+      border-radius: 5px;
+      margin: 15px 0;
+      overflow: hidden;
+      animation: slideIn 0.8s ease-out;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: var(--primary);
+      width: 0%;
+      transition: width 0.5s ease;
+      border-radius: 5px;
+    }
+
+    .analytics-chart {
+      width: 100%;
+      height: 200px;
+      margin: 20px 0;
+      background: rgba(0,0,0,0.05);
+      border-radius: 8px;
+      position: relative;
+      animation: fadeIn 1s ease-out;
+    }
+
+    .chart-bar {
+      position: absolute;
+      bottom: 0;
+      width: 30px;
+      background: var(--primary);
+      transition: all 0.8s ease;
+      border-radius: 5px 5px 0 0;
+    }
+
+    .focus-mode {
+      background: var(--focus-gradient);
+      color: white;
+      background-size: 200% 200%;
+      animation: colorChange 8s ease infinite;
+    }
+
+    .break-mode {
+      background: var(--break-gradient);
+      color: white;
+      background-size: 200% 200%;
+      animation: colorChange 8s ease infinite;
+    }
+
+    .pomodoro-controls {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 15px;
+      animation: slideIn 0.8s ease-out;
+    }
+
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: var(--card-bg);
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      transform: translateX(200%);
+      transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      z-index: 1000;
+      max-width: 300px;
+    }
+
+    .notification.show {
+      transform: translateX(0);
+    }
+
+    .eye-care-reminder {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100%);
+      background: var(--card-bg);
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      text-align: center;
+      z-index: 1000;
+      transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      max-width: 300px;
+    }
+
+    .eye-care-reminder.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .eye-care-reminder h3 {
+      margin-top: 0;
+      color: var(--primary);
+    }
+
+    .eye-care-reminder button {
+      margin-top: 10px;
+      background: var(--primary);
+      border: none;
+      padding: 8px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .eye-care-reminder button:hover {
+      transform: translateY(-2px);
+    }
+
+    .floating-emoji {
+      position: absolute;
+      font-size: 1.5rem;
+      pointer-events: none;
+      animation: float 3s ease-in-out infinite;
+      opacity: 0;
+    }
+
+    .confetti {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      background-color: var(--primary);
+      opacity: 0;
+      z-index: 999;
+      animation: confetti-fall 5s linear forwards;
+    }
+
+    @keyframes confetti-fall {
+      0% {
+        transform: translateY(-100px) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    .study-mode-btn {
+      animation: bounce 2s infinite;
+    }
+
+    .break-mode-btn {
+      animation: pulse 1.5s infinite;
+    }
+
+    .shake {
+      animation: shake 0.5s;
+    }
+
+    .spin {
+      animation: spin 1s linear;
+    }
+
+    .task-list {
+      margin-top: 20px;
+      padding: 15px;
+      background: rgba(0,0,0,0.05);
+      border-radius: 8px;
+      animation: fadeIn 0.8s ease-out;
+    }
+
+    .task-item {
+      display: flex;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(0,0,0,0.1);
+    }
+
+    .task-item:last-child {
+      border-bottom: none;
+    }
+
+    .task-checkbox {
+      margin-right: 10px;
+    }
+
+    .completed {
+      text-decoration: line-through;
+      opacity: 0.7;
+    }
+
+    .task-input-container {
+      display: flex;
+      margin-top: 10px;
+    }
+
+    .task-input {
+      flex-grow: 1;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      margin-right: 5px;
+      background: var(--card-bg);
+      color: var(--text);
+    }
+
+    .add-task-btn {
+      padding: 8px 15px;
+    }
+
+    .motivational-message {
+      text-align: center;
+      font-size: 1.1rem;
+      margin: 15px 0;
+      font-style: italic;
+      color: var(--primary);
+      animation: fadeIn 1s ease-out;
     }
 
     @media (max-width: 600px) {
@@ -178,6 +557,29 @@
         width: 280px;
         height: 210px;
       }
+      .timer-settings {
+        flex-direction: column;
+      }
+      .preset-buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+      .pomodoro-controls {
+        flex-direction: column;
+        align-items: center;
+      }
+      .stats {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+      }
+      .task-input-container {
+        flex-direction: column;
+      }
+      .task-input {
+        margin-right: 0;
+        margin-bottom: 5px;
+      }
     }
   </style>
 </head>
@@ -186,6 +588,21 @@
     <h1>🧠 AI Focus Timer Pro</h1>
     
     <div class="timer-display">02:00</div>
+    
+    <div class="timer-settings">
+      <label for="minutesInput">Minutes:</label>
+      <input type="number" id="minutesInput" min="1" max="120" value="2">
+      <label for="secondsInput">Seconds:</label>
+      <input type="number" id="secondsInput" min="0" max="59" value="0">
+      <button id="setTimeBtn">Set Time</button>
+    </div>
+    
+    <div class="preset-buttons">
+      <button class="preset-btn study-mode-btn" data-minutes="25">🍅 Pomodoro (25m)</button>
+      <button class="preset-btn" data-minutes="50">📚 Deep Work (50m)</button>
+      <button class="preset-btn" data-minutes="30">✍️ Study (30m)</button>
+      <button class="preset-btn break-mode-btn" data-minutes="5">☕ Short Break (5m)</button>
+    </div>
     
     <div class="controls">
       <button id="startBtn">Start Session</button>
@@ -206,7 +623,22 @@
       <div>Distractions: <span id="distractions">0</span></div>
     </div>
     
+    <div class="progress-container">
+      <div class="progress-bar"></div>
+    </div>
+    
+    <div id="motivationalMessage" class="motivational-message"></div>
+    
     <div id="tipsBox" class="tip-box"></div>
+    
+    <div class="task-list">
+      <h3>📝 Task List</h3>
+      <div id="tasksContainer"></div>
+      <div class="task-input-container">
+        <input type="text" id="taskInput" class="task-input" placeholder="Add a new task...">
+        <button id="addTaskBtn" class="add-task-btn">Add</button>
+      </div>
+    </div>
     
     <div class="enhancements">
       <div class="sound-controls hidden" id="soundControls">
@@ -227,7 +659,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/face-landmarks-detection@0.0.3/dist/face-landmarks-detection.js"></script>
   
   <script>
-    // Main Application
+    // Main Application Variables
     let model;
     let timer;
     let minutes = 2;
@@ -237,7 +669,10 @@
     let isRunning = false;
     let faceCheckInterval;
     let sessionStartTime;
+    let currentSound = null;
+    let darkMode = false;
     const sessionHistory = JSON.parse(localStorage.getItem('focusSessions')) || [];
+    const tasks = JSON.parse(localStorage.getItem('focusTasks')) || [];
 
     // DOM Elements
     const timerDisplay = document.querySelector('.timer-display');
@@ -254,6 +689,15 @@
     const soundBtn = document.getElementById('soundBtn');
     const historyBtn = document.getElementById('historyBtn');
     const darkModeToggle = document.getElementById('darkModeToggle');
+    const minutesInput = document.getElementById('minutesInput');
+    const secondsInput = document.getElementById('secondsInput');
+    const setTimeBtn = document.getElementById('setTimeBtn');
+    const progressBar = document.querySelector('.progress-bar');
+    const container = document.querySelector('.container');
+    const taskInput = document.getElementById('taskInput');
+    const addTaskBtn = document.getElementById('addTaskBtn');
+    const tasksContainer = document.getElementById('tasksContainer');
+    const motivationalMessage = document.getElementById('motivationalMessage');
 
     // Productivity Tips
     const tips = [
@@ -267,36 +711,134 @@
       "Review completed sessions to track your progress"
     ];
 
+    // Motivational Messages
+    const messages = [
+      "You're doing great! Keep up the good work!",
+      "Every minute of focus brings you closer to your goals!",
+      "Stay strong! Your future self will thank you!",
+      "Focus now, relax later. You've got this!",
+      "Productivity is a muscle - you're strengthening it right now!",
+      "Small consistent efforts lead to big results!"
+    ];
+
     // Sound Generator Variables
     let noiseNode;
-    const soundContext = new (window.AudioContext || window.webkitAudioContext)();
-
-    // Speech Synthesis
-    function speak(text) {
-      if ('speechSynthesis' in window) {
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.rate = 1.0;
-        utterance.pitch = 1.0;
-        speechSynthesis.speak(utterance);
-      }
+    let soundContext;
+    try {
+      soundContext = new (window.AudioContext || window.webkitAudioContext)();
+    } catch (e) {
+      console.warn("Web Audio API not supported");
     }
 
-    // Initialize
+    // Initialize Application
     document.addEventListener('DOMContentLoaded', () => {
       loadModel();
       showRandomTip();
+      showRandomMotivationalMessage();
+      updateTimerDisplay();
+      renderTasks();
       
       // Event Listeners
       startBtn.addEventListener('click', toggleTimer);
-      soundBtn.addEventListener('click', () => soundControls.classList.toggle('hidden'));
+      soundBtn.addEventListener('click', toggleSoundControls);
       historyBtn.addEventListener('click', toggleHistory);
-      darkModeToggle.addEventListener('click', () => document.body.classList.toggle('dark-mode'));
+      darkModeToggle.addEventListener('click', toggleDarkMode);
+      setTimeBtn.addEventListener('click', setTimerDuration);
+      addTaskBtn.addEventListener('click', addTask);
+      taskInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') addTask();
+      });
       
       // Sound buttons
       document.querySelectorAll('[data-sound]').forEach(btn => {
         btn.addEventListener('click', () => handleSound(btn.dataset.sound));
       });
+      
+      // Preset buttons
+      document.querySelectorAll('.preset-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          minutes = parseInt(btn.dataset.minutes);
+          seconds = 0;
+          minutesInput.value = minutes;
+          secondsInput.value = 0;
+          updateTimerDisplay();
+          
+          // Add animation feedback
+          btn.classList.add('spin');
+          setTimeout(() => {
+            btn.classList.remove('spin');
+          }, 1000);
+          
+          showNotification(`Timer set to ${minutes}:00 ${btn.textContent.split('(')[0]}`);
+        });
+      });
+      
+      // Check for prefers-color-scheme
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        toggleDarkMode();
+      }
     });
+
+    // Task List Functions
+    function renderTasks() {
+      tasksContainer.innerHTML = tasks.map((task, index) => `
+        <div class="task-item">
+          <input type="checkbox" id="task-${index}" class="task-checkbox" ${task.completed ? 'checked' : ''}>
+          <label for="task-${index}" class="${task.completed ? 'completed' : ''}">${task.text}</label>
+        </div>
+      `).join('');
+      
+      // Add event listeners to checkboxes
+      tasks.forEach((task, index) => {
+        document.getElementById(`task-${index}`).addEventListener('change', (e) => {
+          tasks[index].completed = e.target.checked;
+          saveTasks();
+          renderTasks();
+          
+          if (e.target.checked) {
+            showNotification(`Task completed: ${task.text}`);
+            createConfetti();
+          }
+        });
+      });
+    }
+
+    function addTask() {
+      const text = taskInput.value.trim();
+      if (text) {
+        tasks.push({ text, completed: false });
+        saveTasks();
+        renderTasks();
+        taskInput.value = '';
+        showNotification('Task added!');
+      }
+    }
+
+    function saveTasks() {
+      localStorage.setItem('focusTasks', JSON.stringify(tasks));
+    }
+
+    // Set timer duration from user input
+    function setTimerDuration() {
+      const newMinutes = parseInt(minutesInput.value) || 0;
+      const newSeconds = parseInt(secondsInput.value) || 0;
+      
+      if (newMinutes < 0 || newSeconds < 0 || newSeconds > 59) {
+        showNotification("Please enter valid time values (Minutes: 0-120, Seconds: 0-59)");
+        return;
+      }
+      
+      minutes = newMinutes;
+      seconds = newSeconds;
+      updateTimerDisplay();
+      
+      // Show confirmation
+      statusEl.textContent = `Timer set to ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      statusEl.className = "";
+      setTimeout(() => {
+        if (!isRunning) statusEl.textContent = "Ready to start";
+      }, 2000);
+    }
 
     // Load TensorFlow.js model
     async function loadModel() {
@@ -364,16 +906,86 @@
             distractionsEl.textContent = distractions;
             statusEl.textContent = "⚠️ Stay focused!";
             statusEl.className = "distracted";
+            createFloatingEmoji("❌", "warning");
           } else {
             focusTime++;
             const score = Math.round((focusTime / (focusTime + distractions)) * 100);
             scoreEl.textContent = `${score}%`;
             statusEl.textContent = "✓ Focused";
             statusEl.className = "focused";
+            createFloatingEmoji("✅", "success");
           }
+          
+          // Update progress bar
+          const totalTime = (parseInt(minutesInput.value) * 60) + parseInt(secondsInput.value);
+          const elapsedTime = (minutes * 60) + seconds;
+          const progress = ((totalTime - elapsedTime) / totalTime) * 100;
+          progressBar.style.width = `${progress}%`;
+          
+          // Eye care reminder every 20 minutes
+          const elapsedMinutes = (totalTime - elapsedTime) / 60;
+          if (elapsedMinutes > 0 && elapsedMinutes % 20 === 0) {
+            showEyeCareReminder();
+          }
+        } else {
+          statusEl.textContent = "No face detected";
+          statusEl.className = "";
         }
       } catch (error) {
         console.error("Face detection error:", error);
+      }
+    }
+
+    // Create floating emoji feedback
+    function createFloatingEmoji(emoji, type) {
+      const emojiEl = document.createElement('div');
+      emojiEl.className = `floating-emoji ${type}`;
+      emojiEl.textContent = emoji;
+      
+      // Random position in the container
+      const containerRect = container.getBoundingClientRect();
+      const x = Math.random() * (containerRect.width - 30);
+      const y = Math.random() * (containerRect.height - 30);
+      
+      emojiEl.style.left = `${x}px`;
+      emojiEl.style.top = `${y}px`;
+      
+      container.appendChild(emojiEl);
+      
+      // Fade in
+      setTimeout(() => {
+        emojiEl.style.opacity = 1;
+      }, 10);
+      
+      // Remove after animation
+      setTimeout(() => {
+        emojiEl.style.opacity = 0;
+        setTimeout(() => {
+          container.removeChild(emojiEl);
+        }, 1000);
+      }, 2000);
+    }
+
+    // Create confetti effect
+    function createConfetti() {
+      for (let i = 0; i < 50; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        
+        // Random position and color
+        const left = Math.random() * 100;
+        const color = `hsl(${Math.random() * 360}, 100%, 50%)`;
+        
+        confetti.style.left = `${left}%`;
+        confetti.style.backgroundColor = color;
+        confetti.style.animationDuration = `${3 + Math.random() * 3}s`;
+        
+        document.body.appendChild(confetti);
+        
+        // Remove after animation
+        setTimeout(() => {
+          document.body.removeChild(confetti);
+        }, 5000);
       }
     }
 
@@ -399,11 +1011,15 @@
         
         isRunning = true;
         startBtn.textContent = "Pause";
+        startBtn.classList.add('focus-mode');
         sessionStartTime = new Date();
         faceCheckInterval = setInterval(detectFocus, 1000);
         
         // Speak session start
         speak("Starting focus session. Stay focused!");
+        
+        // Show notification
+        showNotification("Focus session started! 🚀");
         
         timer = setInterval(() => {
           if (seconds === 0) {
@@ -422,6 +1038,7 @@
         console.error("Start error:", error);
         isRunning = false;
         startBtn.textContent = "Start Session";
+        showNotification("Failed to start session. Please try again.");
       }
     }
 
@@ -430,11 +1047,13 @@
       clearInterval(faceCheckInterval);
       isRunning = false;
       startBtn.textContent = "Resume";
+      startBtn.classList.remove('focus-mode');
       statusEl.textContent = "Paused";
       statusEl.className = "";
       
       // Speak pause notification
       speak("Session paused");
+      showNotification("Session paused ⏸️");
     }
 
     function completeSession() {
@@ -443,27 +1062,54 @@
       statusEl.textContent = "🎉 Session complete!";
       statusEl.className = "";
       startBtn.textContent = "Start New Session";
+      startBtn.classList.remove('focus-mode');
       isRunning = false;
       
-      // Speak completion
+      // Calculate score
       const score = Math.round((focusTime / (focusTime + distractions)) * 100);
+      
+      // Speak completion
       speak(`Session complete! Congratulations! Your focus score was ${score} percent`);
+      
+      // Show notification with score
+      showNotification(`Session complete! Score: ${score}% 🎯`, 5000);
+      
+      // Create confetti celebration
+      createConfetti();
       
       // Save session
       saveSession();
+      
       // Show breathing exercise
       startBreathingExercise();
+      
       // Show new tip
       showRandomTip();
+      
+      // Show motivational message
+      showRandomMotivationalMessage();
+      
+      // Reset progress bar
+      progressBar.style.width = "0%";
+      
+      // Reset timer
+      resetTimer();
     }
 
     function updateTimerDisplay() {
       timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      
+      // Pulse animation when under 30 seconds
+      if (minutes === 0 && seconds <= 30) {
+        timerDisplay.classList.add('pulse');
+      } else {
+        timerDisplay.classList.remove('pulse');
+      }
     }
 
     function resetTimer() {
-      minutes = 2;
-      seconds = 0;
+      minutes = parseInt(minutesInput.value) || 2;
+      seconds = parseInt(secondsInput.value) || 0;
       distractions = 0;
       focusTime = 0;
       distractionsEl.textContent = "0";
@@ -477,13 +1123,16 @@
       const durationInSeconds = Math.floor((now - sessionStartTime) / 1000);
       const durationMinutes = Math.floor(durationInSeconds / 60);
       const durationSeconds = durationInSeconds % 60;
+      const score = Math.round((focusTime / (focusTime + distractions)) * 100);
       
       const session = {
         date: now.toLocaleString(),
         duration: `${durationMinutes}:${durationSeconds.toString().padStart(2, '0')}`,
-        score: Math.round((focusTime / (focusTime + distractions)) * 100),
-        distractions
+        score,
+        distractions,
+        timestamp: now.getTime()
       };
+      
       sessionHistory.push(session);
       localStorage.setItem('focusSessions', JSON.stringify(sessionHistory));
       
@@ -491,6 +1140,9 @@
       if (!historyView.classList.contains('hidden')) {
         showHistory();
       }
+      
+      // Update analytics
+      updateAnalytics();
     }
 
     function toggleHistory() {
@@ -503,14 +1155,17 @@
     function showHistory() {
       const history = JSON.parse(localStorage.getItem('focusSessions')) || [];
       historyView.innerHTML = history.length 
-        ? history.reverse().map(session => `
-            <div class="session-card">
-              <p>📅 ${session.date}</p>
-              <p>⏱️ ${session.duration}</p>
-              <p>🎯 ${session.score}% Focus</p>
-              <p>⚠️ ${session.distractions} distractions</p>
-            </div>
-          `).join('')
+        ? history
+            .sort((a, b) => b.timestamp - a.timestamp)
+            .slice(0, 10)
+            .map(session => `
+              <div class="session-card">
+                <p>📅 ${session.date}</p>
+                <p>⏱️ ${session.duration}</p>
+                <p>🎯 ${session.score}% Focus</p>
+                <p>⚠️ ${session.distractions} distractions</p>
+              </div>
+            `).join('')
         : "<p>No sessions recorded yet</p>";
     }
 
@@ -537,38 +1192,183 @@
 
     // Sound generator
     function handleSound(type) {
-      if (noiseNode) noiseNode.stop();
-      if (type === "off") return;
-      
-      noiseNode = soundContext.createOscillator();
-      const gainNode = soundContext.createGain();
-      
-      // Configure different sound profiles
-      switch(type) {
-        case "rain":
-          noiseNode.type = "brownnoise";
-          gainNode.gain.value = 0.02;
-          break;
-        case "forest":
-          noiseNode.type = "sine";
-          noiseNode.frequency.value = 100;
-          gainNode.gain.value = 0.03;
-          break;
-        case "cafe":
-          noiseNode.type = "white";
-          gainNode.gain.value = 0.01;
-          break;
+      if (currentSound === type) {
+        // Toggle off if clicking the same sound
+        stopSound();
+        currentSound = null;
+        showNotification("Sound off 🔇");
+        return;
       }
       
-      noiseNode.connect(gainNode);
-      gainNode.connect(soundContext.destination);
-      noiseNode.start();
+      // Stop any existing sound
+      if (noiseNode) noiseNode.stop();
+      
+      if (type === "off") {
+        stopSound();
+        currentSound = null;
+        return;
+      }
+      
+      try {
+        if (!soundContext) {
+          soundContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        
+        noiseNode = soundContext.createOscillator();
+        const gainNode = soundContext.createGain();
+        
+        // Configure different sound profiles
+        switch(type) {
+          case "rain":
+            noiseNode.type = "brownnoise";
+            gainNode.gain.value = 0.02;
+            showNotification("Rain sounds activated 🌧️");
+            break;
+          case "forest":
+            noiseNode.type = "sine";
+            noiseNode.frequency.value = 100;
+            gainNode.gain.value = 0.03;
+            showNotification("Forest sounds activated 🌲");
+            break;
+          case "cafe":
+            noiseNode.type = "white";
+            gainNode.gain.value = 0.01;
+            showNotification("Cafe sounds activated ☕");
+            break;
+        }
+        
+        noiseNode.connect(gainNode);
+        gainNode.connect(soundContext.destination);
+        noiseNode.start();
+        currentSound = type;
+      } catch (e) {
+        console.error("Sound error:", e);
+        showNotification("Sound not supported in your browser");
+      }
+    }
+
+    function stopSound() {
+      if (noiseNode) {
+        noiseNode.stop();
+        noiseNode = null;
+      }
+    }
+
+    function toggleSoundControls() {
+      soundControls.classList.toggle('hidden');
+      if (!soundControls.classList.contains('hidden')) {
+        soundControls.style.animation = "slideIn 0.5s ease-out";
+      }
     }
 
     // Productivity tips
     function showRandomTip() {
       const tip = tips[Math.floor(Math.random() * tips.length)];
       tipsBox.textContent = tip;
+      tipsBox.style.animation = "fadeIn 0.5s ease-out";
+    }
+
+    // Motivational messages
+    function showRandomMotivationalMessage() {
+      const message = messages[Math.floor(Math.random() * messages.length)];
+      motivationalMessage.textContent = message;
+      motivationalMessage.style.animation = "fadeIn 0.5s ease-out";
+    }
+
+    // Notification System
+    function showNotification(message, duration = 3000) {
+      const notification = document.createElement('div');
+      notification.className = 'notification';
+      notification.textContent = message;
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.classList.add('show');
+      }, 10);
+      
+      setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => {
+          document.body.removeChild(notification);
+        }, 500);
+      }, duration);
+    }
+
+    // Eye Care Reminder
+    function showEyeCareReminder() {
+      const reminder = document.createElement('div');
+      reminder.className = 'eye-care-reminder';
+      reminder.innerHTML = `
+        <h3>👀 Eye Care Reminder</h3>
+        <p>You've been focusing for a while. Take a moment to look at something 20 feet away for 20 seconds.</p>
+        <button id="dismissEyeCare">Got it!</button>
+      `;
+      document.body.appendChild(reminder);
+      
+      setTimeout(() => {
+        reminder.classList.add('show');
+      }, 10);
+      
+      document.getElementById('dismissEyeCare').addEventListener('click', () => {
+        reminder.classList.remove('show');
+        setTimeout(() => {
+          document.body.removeChild(reminder);
+        }, 500);
+      });
+    }
+
+    // Speech Synthesis
+    function speak(text) {
+      if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 1.0;
+        utterance.pitch = 1.0;
+        speechSynthesis.speak(utterance);
+      }
+    }
+
+    // Dark Mode Toggle
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark-mode');
+      darkMode = !darkMode;
+      darkModeToggle.textContent = darkMode ? "☀️ Light Mode" : "🌙 Dark Mode";
+      localStorage.setItem('darkMode', darkMode);
+    }
+
+    // Analytics Chart
+    function updateAnalytics() {
+      const history = JSON.parse(localStorage.getItem('focusSessions')) || [];
+      if (history.length < 2) return;
+      
+      // Get last 7 sessions
+      const lastSessions = history
+        .sort((a, b) => b.timestamp - a.timestamp)
+        .slice(0, 7)
+        .reverse();
+      
+      // Update chart if it exists
+      const chartContainer = document.querySelector('.analytics-chart');
+      if (chartContainer) {
+        chartContainer.innerHTML = '';
+        
+        const maxScore = Math.max(...lastSessions.map(s => s.score), 100);
+        const barWidth = 100 / lastSessions.length;
+        
+        lastSessions.forEach((session, i) => {
+          const bar = document.createElement('div');
+          bar.className = 'chart-bar';
+          bar.style.left = `${i * barWidth}%`;
+          bar.style.width = `${barWidth * 0.8}%`;
+          bar.style.height = `${(session.score / maxScore) * 100}%`;
+          bar.title = `${session.date}\nScore: ${session.score}%`;
+          chartContainer.appendChild(bar);
+        });
+      }
+    }
+
+    // Initialize analytics if element exists
+    if (document.querySelector('.analytics-chart')) {
+      updateAnalytics();
     }
   </script>
 </body>
